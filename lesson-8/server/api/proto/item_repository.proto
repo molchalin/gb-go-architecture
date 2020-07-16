@@ -1,0 +1,34 @@
+// protoc -I proto/ proto/item.proto --go_out=plugins=grpc:.
+
+/*
+protoc \
+  --go_out=Mgrpc/service_config/service_config.proto=/internal/proto/grpc_service_config:. \
+  --go-grpc_out=Mgrpc/service_config/service_config.proto=/internal/proto/grpc_service_config:. \
+  --go_opt=paths=source_relative \
+  --go-grpc_opt=paths=source_relative \
+  ./proto1/item_repository.proto
+*/
+syntax = "proto3";
+package proto;
+
+service ItemRepository {
+  rpc CreateItem(CreateItemRequest) returns (Item) {}
+  rpc UpdateItem(UpdateItemRequest) returns (Item) {}
+}
+
+message Item {
+  int32 id = 1;
+  string name = 2;
+  float price = 3;
+}
+
+message CreateItemRequest {
+  string name = 1;
+  float price = 2;
+}
+
+message UpdateItemRequest {
+  int32 id = 1;
+  string name = 2;
+  float price = 3;
+}
