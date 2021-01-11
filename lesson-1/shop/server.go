@@ -4,15 +4,19 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"shop/models"
-	"shop/repository"
 	"strconv"
 
 	"github.com/gorilla/mux"
+
+	"shop/models"
+	"shop/repository"
+	"shop/service"
 )
 
+// interface layer
 type shopHandler struct {
-	db repository.Repository
+	db      repository.Repository
+	service service.Service
 }
 
 func (s *shopHandler) createItemHandler(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +28,7 @@ func (s *shopHandler) createItemHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	item, err = s.db.CreateItem(item)
+	item, err = s.service.CreateItem(item)
 	if err != nil {
 		log.Println(err)
 		json.NewEncoder(w).Encode(map[string]bool{"ok": false})

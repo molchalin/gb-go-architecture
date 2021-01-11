@@ -5,10 +5,12 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"shop/repository"
 	"time"
 
 	"github.com/gorilla/mux"
+
+	"shop/repository"
+	"shop/service"
 )
 
 func main() {
@@ -22,7 +24,9 @@ func main() {
 
 	handler := &shopHandler{}
 	if *isDebug {
-		handler.db = repository.NewMapDB()
+		rep := repository.NewMapDB()
+		handler.db = rep
+		handler.service = service.NewService(rep)
 	}
 
 	router := mux.NewRouter()
