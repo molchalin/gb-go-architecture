@@ -1,52 +1,29 @@
 package main
 
 import (
-	"flag"
+	"gb-go-architecture/lesson-1/shop_new/repository"
 	"log"
 	"net/http"
-	"os"
-	"time"
 
 	"github.com/gorilla/mux"
-
-	"shop/repository"
-	"shop/service"
 )
 
 func main() {
-	isDebug := flag.Bool("mode", true, "runs app in debug mode")
-	flag.Parse()
-
-	webAddr, ok := os.LookupEnv("WEB_SERVER_ADDR")
-	if !ok {
-		log.Fatal("WEB_SERVER_ADDR env not set")
-	}
-
-	handler := &shopHandler{}
-	if *isDebug {
-		rep := repository.NewMapDB()
-		handler.db = rep
-		handler.service = service.NewService(rep)
+	s := &server{
+		rep: repository.NewMapDB(),
 	}
 
 	router := mux.NewRouter()
 
-	router.HandleFunc("/item", handler.createItemHandler).Methods("POST")
-	router.HandleFunc("/item/{id}", handler.getItemHandler).Methods("GET")
-	router.HandleFunc("/item/{id}", handler.deleteItemHandler).Methods("DELETE")
-	router.HandleFunc("/item/{id}", handler.updateItemHandler).Methods("PUT")
+	router.HandleFunc("/item", s.listItemHandler).Methods("GET")
+	router.HandleFunc("/item", s.createItemHandler).Methods("POST")
+	router.HandleFunc("/item/{id}", s.getItemHandler).Methods("GET")
+	router.HandleFunc("/item/{id}", s.deleteItemHandler).Methods("DELETE")
+	router.HandleFunc("/item/{id}", s.updateItemHandler).Methods("PUT")
 
 	srv := &http.Server{
-		Addr: webAddr,
-		// Good practice to set timeouts to avoid Slowloris attacks.
-		WriteTimeout: time.Second * 15,
-		ReadTimeout:  time.Second * 15,
-		IdleTimeout:  time.Second * 60,
-		Handler:      router, // Pass our instance of gorilla/mux in.
+		Addr:    ":8081",
+		Handler: router,
 	}
-
-	err := srv.ListenAndServe()
-	if err != nil {
-		log.Fatal(err)
-	}
+	log.Fatal(srv.ListenAndServe())
 }

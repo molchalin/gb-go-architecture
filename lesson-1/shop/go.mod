@@ -1,8 +1,8 @@
-module shop
+module gb-go-architecture/lesson-1/shop_new
 
-go 1.14
+go 1.15
 
 require (
-	github.com/gorilla/mux v1.7.4
-	google.golang.org/grpc v1.30.0
+	github.com/gorilla/mux v1.8.0
+	go.uber.org/zap v1.16.0
 )

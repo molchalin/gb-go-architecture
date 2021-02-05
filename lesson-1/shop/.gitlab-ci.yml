@@ -1,9 +1,0 @@
-stages:
-  - build
-
-build:
-  stage: build
-  only:
-    - dev
-  script:
-    - go build -o app ./
